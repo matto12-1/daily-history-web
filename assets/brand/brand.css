@@ -1,0 +1,87 @@
+/* brand.css: MattoLAB 푸터. **이 파일이 원본이다.**
+   각 사이트의 assets/brand/ 로 sync.mjs가 복사한다. 사이트 쪽 사본을 고치지 말 것.
+
+   ── 사이트가 정하는 것 ──
+   아래 --lab-* 변수만 각 사이트 스타일시트에서 덮어쓴다. 안 덮으면 여기 기본값을 쓴다.
+     .lab{ --lab-ink:#2E2B25; --lab-dim:#6E6A5F; --lab-line:#CFC2A6; --lab-hi:rgba(200,162,90,.42); }
+
+   ── 사이트가 못 바꾸는 것 ──
+   브랜드 고정색은 변수로 빼지 않고 여기 박아 둔다. 한 번 사고가 났다:
+   아침신문에서 CONTACT 라벨이 --accent-dark를 쓰는 바람에 **기사 갈래마다 색이 바뀌었다**
+   (과학=주황, 역사=갈색, 문학=보라). 브랜드 칸은 어느 화면에서도 같아야 한다. */
+
+.lab{
+  --lab-ink:#2E2B25;                    /* 짙은 글자 */
+  --lab-dim:#6E6A5F;                    /* 보통 글자 */
+  --lab-line:#CFC2A6;                   /* 가는 선 */
+  --lab-hi:rgba(200,162,90,.42);        /* 조회수 숫자 형광펜 */
+  --lab-key:#8B8271;                    /* Email/Instagram 같은 키 */
+  --lab-soft:#948C7B;                   /* 제품 한 줄 설명 */
+  --lab-soon:#A79C87;                   /* "준비 중이에요" */
+
+  max-width:var(--lab-wrap, 1180px); margin:0 auto; padding:16px 22px 22px;
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(190px,auto);
+  gap:16px 40px; align-items:start;
+}
+.lab-l{ min-width:0; }
+/* 저작권 한 줄 — 격자 두 열을 가로지르는 맨 아랫줄. */
+.lab-copy{ grid-column:1 / -1; margin:0; padding-top:10px; border-top:1px solid var(--lab-line);
+  font-size:11px; line-height:1.6; color:var(--lab-soft); word-break:keep-all; }
+.lab-r{ display:flex; flex-direction:column; gap:12px; }
+
+.brandline{ display:flex; align-items:baseline; gap:15px; margin-bottom:12px; flex-wrap:wrap; }
+/* 18px = 워드마크 가로 90px. 브랜드 문서가 정한 최소 크기다(14px면 70px로 미달). */
+.labmark{ font-family:"Sora", var(--lab-sans, system-ui), sans-serif; font-size:18px;
+  letter-spacing:-.012em; line-height:1; }
+.labmark i{ font-style:normal; font-weight:500; color:#1E1E1E; }   /* Ink · 고정 */
+.labmark b{ font-weight:800; color:#E8590C; }                      /* Signal Coral · 고정 */
+.brandline em{ font-style:normal; font-size:11.5px; color:var(--lab-soft); }
+
+/* 제품 격자: 2행을 유지한 채 오른쪽으로 자란다. 열 너비는 내용에 맞춘다.
+   1fr로 3등분하면 짧은 이름("하루") 뒤에 빈 자리가 길게 남아 휑해 보인다. */
+.prod{ display:grid; grid-auto-flow:column; grid-template-rows:repeat(2,auto);
+  justify-content:start; gap:9px 18px; }
+/* .p가 아니라 .lab-p다: 고전 쪽 도감 가족도 카드가 .p를 쓰고 있어서
+   그쪽 :hover(테두리+배경)가 제품 칸에 네모로 걸렸다. */
+.lab-p{ display:flex; flex-direction:column; gap:1px; min-width:0; }
+.lab-p b{ font-weight:600; font-size:12.5px; color:var(--lab-ink); white-space:nowrap; }
+.lab-p b.on{ color:#E8590C; }   /* 지금 보고 있는 제품 · 고정 */
+.lab-p em{ font-style:normal; color:var(--lab-soft); font-size:11px; white-space:nowrap; }
+/* 링크임을 네모나 밑줄로 알리지 않는다. 살짝 떠올라 그림자가 지고 짙어진다. */
+.lab-p a{ display:inline-block; color:var(--lab-ink); text-decoration:none; cursor:pointer;
+  transition:transform .14s ease, color .14s ease, text-shadow .14s ease; }
+.lab-p a:hover{ color:#1E1E1E; transform:translateY(-1px);
+  text-shadow:0 1px 2px rgba(40,34,20,.26); }
+.lab-p a:active{ transform:translateY(0); }
+.lab-p a:focus-visible{ outline:2px solid var(--lab-focus, #C8A25A); outline-offset:3px; border-radius:2px; }
+
+.lab-label{ font-family:"Sora", var(--lab-sans, system-ui), sans-serif; font-weight:700;
+  font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
+  color:#94702F; display:block; }   /* 청동 · 고정 */
+/* 라벨 아래 여백은 .lab-r의 gap(12px)만 쓴다. margin-bottom을 겹쳐 주면 19px가 되어
+   CONTACT와 Email 사이가 한 줄 빈 것처럼 보인다. */
+.cx{ display:grid; grid-template-columns:auto auto minmax(0,1fr);
+  gap:3px 9px; align-items:baseline; font-size:12px; color:var(--lab-dim); }
+.cx .k{ font-family:"Sora", var(--lab-sans, system-ui), sans-serif; font-weight:600;
+  font-size:10.5px; letter-spacing:.06em; color:var(--lab-key); white-space:nowrap; }
+.cx .dash{ color:var(--lab-line); }
+/* 연락처는 밑줄 없이 둔다. 네 줄이 나란히 서면 밑줄이 줄무늬처럼 보인다. */
+.cx a{ color:var(--lab-dim); text-decoration:none; border-bottom:1px solid transparent;
+  padding-bottom:1px; }
+.cx a:hover{ color:var(--lab-ink); border-bottom-color:var(--lab-dim); }
+.cx .soon{ color:var(--lab-soon); }
+
+.views{ margin:0; text-align:right; font-size:12.5px; font-weight:600; color:var(--lab-dim);
+  white-space:nowrap; align-self:flex-end; }
+.views .n{ font-weight:700; color:var(--lab-ink); font-variant-numeric:tabular-nums;
+  box-shadow:inset 0 -.38em 0 var(--lab-hi); padding:0 2px; border-radius:2px; }
+
+@media (max-width:760px){
+  /* 좁으면 제품 격자와 Contact가 한 줄에 못 선다. 위아래로 쌓는다. */
+  .lab{ grid-template-columns:1fr; gap:14px; }
+  .prod{ grid-auto-flow:row; grid-template-rows:none; gap:9px 0; }
+}
+@media (prefers-reduced-motion:reduce){
+  .lab-p a{ transition:none; }
+  .lab-p a:hover{ transform:none; }
+}
