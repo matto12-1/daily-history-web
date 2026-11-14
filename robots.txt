@@ -1,0 +1,40 @@
+# © Matto. 이 사이트의 글·그림·코드는 저작권법으로 보호됩니다.
+# AI 학습·수집·재가공을 허락하지 않습니다. (No AI training, scraping or reuse.)
+
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: OAI-SearchBot
+User-agent: ClaudeBot
+User-agent: Claude-User
+User-agent: Claude-SearchBot
+User-agent: anthropic-ai
+User-agent: claude-web
+User-agent: Google-Extended
+User-agent: GoogleOther
+User-agent: Applebot-Extended
+User-agent: CCBot
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Bytespider
+User-agent: meta-externalagent
+User-agent: meta-externalfetcher
+User-agent: FacebookBot
+User-agent: Amazonbot
+User-agent: cohere-ai
+User-agent: cohere-training-data-crawler
+User-agent: Diffbot
+User-agent: YouBot
+User-agent: MistralAI-User
+User-agent: DeepSeekBot
+User-agent: PetalBot
+User-agent: ImagesiftBot
+User-agent: Omgilibot
+User-agent: Timpibot
+User-agent: AI2Bot
+User-agent: img2dataset
+Disallow: /
+
+User-agent: *
+Allow: /
+
+Sitemap: https://history.matto.kr/sitemap.xml
