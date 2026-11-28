@@ -1,0 +1,118 @@
+/* 내 마을 — 계화 먹선 아이소 마을의 모든 스타일 (DECISIONS 51).
+   app.html 과 village-bench.html 이 같은 이 한 벌을 쓴다 — 벤치가 복사본을 들면 조용히 어긋난다.
+   빌더(tools/build-artifact.mjs)가 <link> 를 그대로 인라인하므로 오프라인 아티팩트에도 들어간다. */
+
+/* ── 틀 ────────────────────────────────────────────────────────────── */
+#village{position:absolute; inset:0; overflow:hidden}
+
+/* 광곽 — 리더의 판면과 같은 이중 테두리. 마을은 종이 위에 그려진 그림이다.
+   머리글(.vhd) 아래에서 시작해 화면 끝에 닿지 않는다 */
+#village .vhost{position:absolute; inset:86px 28px 26px; display:grid; place-items:center;
+  border:1.5px solid var(--ink-2v); outline:1px solid var(--ink-3v); outline-offset:-6px}
+#village .vhost svg{width:100%; height:100%; display:block}
+/* 안개 — 땅이 테두리에서 잘리지 않고 사라지게. 종이색 안쪽 번짐 하나로 네 변을 함께 푼다 */
+#village .vhost::after{content:""; position:absolute; inset:0; pointer-events:none; z-index:2;
+  box-shadow:inset 0 0 46px 22px var(--paper), inset 0 0 12px 2px var(--paper)}
+
+#village .vhd{position:absolute; left:0; right:0; top:0; z-index:11; display:flex; align-items:flex-start; justify-content:space-between;
+  padding:16px 56px 14px; background:linear-gradient(180deg, rgba(251,248,241,.94) 40%, transparent)}
+#village .era{display:flex; align-items:center; gap:12px; text-align:left; padding:4px 10px 4px 2px; border-radius:8px; min-height:48px}
+#village .era:hover{background:rgba(51,41,31,.05)}
+#village .era .seal{width:40px; height:40px; font-size:20px; transform:rotate(-4deg); border-radius:3px}
+#village .era .n{display:block; font-family:var(--display); font-size:24px; line-height:1.15}
+#village .era .m{display:block; font-size:12.5px; color:var(--ink-2); margin-top:3px}
+#village .era .nx{display:block; font-size:12.5px; font-weight:700; color:var(--ink-2); margin-top:4px}
+#village .era .nx b{color:var(--seal); font-weight:800}
+#village .stamp, .erasheet .stamp{display:inline-grid; place-items:center; width:30px; height:30px; margin-left:10px; vertical-align:-7px;
+  font-style:normal; font-size:11px; line-height:1.05; color:var(--paper); background:var(--seal); mix-blend-mode:multiply;
+  transform:rotate(8deg); border-radius:2px; box-shadow:inset 0 0 0 1px var(--seal), inset 0 0 0 2.5px rgba(251,248,241,.55)}
+#village .rank{text-align:right; font-family:var(--display); font-size:17px; padding-top:6px}
+#village .rank span{display:block; font-family:var(--sans); font-size:12.5px; color:var(--ink-2); margin-top:3px; font-variant-numeric:tabular-nums}
+#village .lotnote{position:absolute; left:56px; bottom:22px; z-index:11; max-width:560px; line-height:1.7; font-size:12.5px; font-weight:700; color:var(--seal)}
+#village .lotnote.quiet{color:var(--ink-2); font-weight:400}
+/* 사람이 0명인 까닭을 말하는 줄 — 종이 위에 얹혀 마을 그림과 겹쳐도 읽힌다 */
+#village .lotnote.why{background:rgba(251,248,241,.86); padding:9px 13px; border-radius:8px; box-shadow:0 1px 0 var(--line)}
+#village .lotnote.why b{font-weight:700; color:var(--ink)}
+
+/* ── 먹 세 단 ───────────────────────────────────────────────────────
+   산수화의 농묵·중묵·담묵. 색이 아니라 먹의 농도로 원근과 위계를 만든다.
+   종이(#FBF8F1) 위 실효 대비: 농묵 9.3:1 · 중묵 3.9:1 · 담묵 2.6:1 — 셋이 눈으로 구분된다.
+   ⚠ 담묵에 opacity 를 얹지 말 것. 얹으면 흐려지기만 하고 위계가 안 생긴다(하루 v3.12.1 에서 같은 함정).
+      농도는 색의 알파로 정하고, 그 색을 그대로 쓴다.
+   ⚠ vector-effect:non-scaling-stroke 가 이 파일의 심장이다.
+      없으면 획 굵기가 viewBox 배율에 눌려 시대 4 에서 0.65px 가 된다 — 마을이 자랄수록 먹선이 사라졌다. */
+#village{
+  --ink-1v:rgba(51,41,31,.88);   /* 농묵 — 윤곽. 물체의 경계 */
+  --ink-2v:rgba(51,41,31,.60);   /* 중묵 — 면과 면 사이, 광곽 */
+  --ink-3v:rgba(51,41,31,.45);   /* 담묵 — 결. 이엉·기와 골·무늬 */
+  --face-1:#FBF8F1;              /* 볕 받는 면 = 종이 그대로 */
+  --face-2:#EDE4D1;              /* 옆면 */
+  --face-3:#D3C5A8;              /* 그늘 면. L 0.94 → 0.78 → 0.64 로 고르게 내려간다 */
+  --vera:#8C7C66;                /* 그 시대의 담채. village.js 가 인라인으로 갈아 끼운다 */
+}
+#village svg *{vector-effect:non-scaling-stroke}
+
+#village .ink{fill:none; stroke:var(--ink-1v); stroke-width:1.15; stroke-linejoin:round; stroke-linecap:round}
+#village .fillp{fill:var(--face-1); stroke:var(--ink-1v); stroke-width:1.15; stroke-linejoin:round}
+#village .side{fill:var(--face-2); stroke:var(--ink-1v); stroke-width:1.15; stroke-linejoin:round}
+#village .dark{fill:var(--face-3); stroke:var(--ink-1v); stroke-width:1.15; stroke-linejoin:round}
+#village .mid{fill:none; stroke:var(--ink-2v); stroke-width:.9; stroke-linejoin:round; stroke-linecap:round}
+#village .thin{fill:none; stroke:var(--ink-3v); stroke-width:.8; stroke-linecap:round}
+
+/* ── 담채 — 먹 위에 얹는 옅은 색. 먹을 대신하지 않는다 ────────────────
+   시대가 오르면 --vera 가 바뀌어 지붕·밭·물의 색조가 통째로 달라진다 = '갈아입었다'가 눈에 보인다 */
+#village .roof{fill:color-mix(in srgb, var(--vera) 15%, var(--face-1)); stroke:var(--ink-1v); stroke-width:1.15; stroke-linejoin:round}
+#village .roofd{fill:color-mix(in srgb, var(--vera) 26%, var(--face-2)); stroke:var(--ink-1v); stroke-width:1.15; stroke-linejoin:round}
+#village .crop{fill:color-mix(in srgb, #8C9A6B 62%, var(--vera)); opacity:.24; mix-blend-mode:multiply; stroke:none}
+#village .wash{fill:color-mix(in srgb, #7E9AAB 78%, var(--vera)); opacity:.22; mix-blend-mode:multiply; stroke:none}
+#village .earth{fill:color-mix(in srgb, #B9A882 80%, var(--vera)); opacity:.28; mix-blend-mode:multiply; stroke:none}
+#village .shadow{fill:rgba(51,41,31,.10); stroke:none}
+
+/* 마을회관 — 크기만으로는 이웃에 먹힌다(DECISIONS 54 '마을회관이 눈에 안 띈다').
+   담채를 한 단 짙게 해서 색조로 먼저 눈에 들어오게 한다. 마을에서 지붕이 가장 진한 집이 하나뿐이면
+   그것이 어디 있는지는 보기 전에 알게 된다 */
+#village .it[data-kind="hall"] .roof{fill:color-mix(in srgb, var(--vera) 34%, var(--face-1))}
+#village .it[data-kind="hall"] .roofd{fill:color-mix(in srgb, var(--vera) 50%, var(--face-2))}
+#village .it[data-kind="hall"] .fillp{fill:color-mix(in srgb, var(--vera) 12%, var(--face-1))}
+
+/* ── 땅 위의 것 ─────────────────────────────────────────────────────── */
+#village .road{stroke:#B9A882; stroke-width:9; fill:none; opacity:.5; stroke-linecap:round; stroke-linejoin:round}
+#village .roadedge{fill:none; stroke:var(--ink-3v); stroke-width:.8; stroke-linecap:round; stroke-linejoin:round}
+#village .sun{fill:#C9A24B; opacity:.13}
+#village .hillfill{fill:#E6DECB; stroke:none}
+#village .hillline{fill:none; stroke:var(--ink-2v); stroke-width:1; stroke-linecap:round}
+
+/* ── 만지는 것 ─────────────────────────────────────────────────────── */
+#village .it, #village .lot{cursor:pointer}
+#village .it:focus-visible, #village .lot:focus-visible{outline:2px solid var(--indigo)}
+/* 갓 생긴 것은 인주로 그어졌다가 먹으로 앉는다 — 화면의 빨강은 이것과 빈 터뿐이다 */
+#village .it.new .ink, #village .it.new .fillp, #village .it.new .side, #village .it.new .dark,
+#village .it.new .roof, #village .it.new .roofd, #village .it.new .mid, #village .it.new .thin{stroke:var(--seal)}
+/* 빈 터 — 화면의 유일한 조작 지점이다. 작으면 없는 것과 같다 (DECISIONS 54) */
+#village .lotpad{fill:rgba(181,56,43,.10); stroke:var(--seal); stroke-width:1.6; stroke-dasharray:5 4}
+#village .lot .q{font-family:var(--display); font-size:34px; fill:var(--seal)}
+#village .lot{animation:vbreath 2.8s ease-in-out infinite; transform-box:fill-box; transform-origin:50% 100%}
+
+@keyframes vbreath{0%,100%{opacity:.82} 50%{opacity:1}}
+@keyframes vwalk{0%{transform:translate(0,0)} 47%,50%{transform:translate(var(--dx),var(--dy))} 97%,100%{transform:translate(0,0)}}
+@keyframes vbob{0%,100%{transform:translateY(0)} 50%{transform:translateY(-1px)}}
+@keyframes vlegf{0%,100%{transform:rotate(16deg)} 50%{transform:rotate(-16deg)}}
+@keyframes vlegb{0%,100%{transform:rotate(-16deg)} 50%{transform:rotate(16deg)}}
+@keyframes vchop{0%,100%{transform:rotate(-48deg)} 55%{transform:rotate(12deg)}}
+@keyframes vstoop{0%,100%{transform:rotate(0)} 50%{transform:rotate(22deg)}}
+@keyframes vsmoke{0%{transform:translate(0,0) scale(.4); opacity:0} 22%{opacity:.4} 100%{transform:translate(var(--sx),-42px) scale(1.5); opacity:0}}
+@keyframes vflick{0%,100%{transform:scaleY(1)} 50%{transform:scaleY(.74) scaleX(1.1)}}
+@keyframes vglint{0%,100%{opacity:.22} 50%{opacity:.46}}
+@keyframes vsway{0%,100%{transform:rotate(-.9deg)} 50%{transform:rotate(.9deg)}}
+@keyframes vfly{from{transform:translate(-80px,0)} to{transform:translate(var(--bw,1200px),-34px)}}
+#village .mover{animation:vwalk var(--t) ease-in-out infinite}
+#village .bod{animation:vbob calc(var(--t)/34) ease-in-out infinite}
+#village .legA{transform-origin:0 -4px; animation:vlegf calc(var(--t)/34) ease-in-out infinite}
+#village .legB{transform-origin:0 -4px; animation:vlegb calc(var(--t)/34) ease-in-out infinite}
+#village .chop{transform-origin:0 -9px; animation:vchop 1.6s ease-in-out infinite}
+#village .stoop{transform-origin:0 0; animation:vstoop 3.2s ease-in-out infinite}
+#village .smoke{animation:vsmoke var(--st) linear infinite; animation-delay:var(--sd)}
+#village .fire{transform-origin:0 0; animation:vflick 1.05s ease-in-out infinite}
+#village .glint{animation:vglint var(--gt) ease-in-out infinite}
+#village .tree{transform-origin:0 0; animation:vsway var(--wt) ease-in-out infinite}
+#village .bird{animation:vfly 46s linear infinite; animation-delay:var(--bd)}
